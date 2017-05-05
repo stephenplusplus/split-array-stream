@@ -16,11 +16,11 @@
   "author": "Stephen Sawchuk <sawchuk@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.2.5",
+    "mocha": "^3.3.0",
     "through2": "^2.0.0"
   },
   "dependencies": {
-    "async": "^1.4.0",
+    "async": "^2.4.0",
     "end-of-stream": "^1.4.0"
   }
 }
