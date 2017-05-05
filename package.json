@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "async": "^1.4.0",
-    "is-stream-ended": "^0.1.0"
+    "end-of-stream": "^1.4.0"
   }
 }
