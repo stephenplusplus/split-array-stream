@@ -8,7 +8,7 @@ module.exports = function (array, stream, callback) {
 
   var ended = false;
 
-  eos(stream, function() {
+  var removeEndEventListener = eos(stream, function() {
     ended = true;
   });
 
@@ -23,6 +23,7 @@ module.exports = function (array, stream, callback) {
     },
 
     function () {
+      removeEndEventListener();
       callback(ended);
     });
 };
