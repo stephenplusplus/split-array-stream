@@ -1,20 +1,14 @@
 'use strict';
 
 var async = require('async');
-var eos = require('end-of-stream');
+var ended = require('is-stream-ended');
 
 module.exports = function (array, stream, callback) {
   var arr = [].slice.call(array);
 
-  var ended = false;
-
-  var removeEndEventListener = eos(stream, function() {
-    ended = true;
-  });
-
   async.whilst(
     function () {
-      return !ended && arr.length > 0;
+      return !ended(stream) && arr.length > 0;
     },
 
     function (next) {
@@ -23,7 +17,6 @@ module.exports = function (array, stream, callback) {
     },
 
     function () {
-      removeEndEventListener();
-      callback(ended);
+      callback(ended(stream));
     });
 };
