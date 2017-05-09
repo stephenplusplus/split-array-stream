@@ -1,6 +1,6 @@
 {
   "name": "split-array-stream",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Safely push each item of an array to a stream",
   "main": "index.js",
   "repository": "stephenplusplus/split-array-stream",
