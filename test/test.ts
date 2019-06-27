@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import * as through from 'through2';
+
 import {split} from '../src';
 
 describe('split-array-stream', () => {

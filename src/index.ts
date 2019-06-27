@@ -1,4 +1,3 @@
-import * as ended from 'is-stream-ended';
 import {Transform} from 'stream';
 
 /**
@@ -6,23 +5,21 @@ import {Transform} from 'stream';
  * @param array The array you want to push to the stream.
  * @param stream The Transform stream into which array items are pushed.
  */
-export async function split(array: Array<{}>, stream: Transform) {
-  return new Promise<boolean>((resolve, reject) => {
-    const arr = [].slice.call(array);
-    function loopyloop() {
-      // Ensure the stream wasn't closed by the consumer.
-      const isEnded = ended(stream);
-      // Ensure al items from the array haven't been pushed.
-      const cont = !isEnded && arr.length > 0;
-      if (cont) {
-        stream.push(arr.shift());
-        // For large arrays, use setImmediate to ensure other microtasks
-        // and I/O operations have a chance to execute.
-        setImmediate(loopyloop);
-      } else {
-        resolve(isEnded);
+export async function split(
+    array: Array<{}>, stream: Transform): Promise<boolean> {
+  const arr = [].slice.call(array);
+  let ended = false;
+
+  for (const item of arr) {
+    ended = !stream.writable || !stream.readable;
+
+    if (!ended) {
+      if (stream.write(item)) {
+        continue;
       }
+      await new Promise(resolve => stream.once('drain', resolve));
     }
-    loopyloop();
-  });
+  }
+
+  return ended;
 }
