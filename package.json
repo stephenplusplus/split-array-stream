@@ -1,7 +1,7 @@
 {
   "name": "split-array-stream",
   "version": "2.0.0",
-  "description": "Safely push each item of an array to a stream",
+  "description": "Split an array's contents into multiple data events",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "files": [
@@ -29,13 +29,9 @@
   "devDependencies": {
     "@types/mocha": "^5.0.0",
     "@types/node": "^9.6.1",
-    "@types/through2": "^2.0.33",
     "gts": "^0.5.4",
     "mocha": "^5.0.5",
     "through2": "^2.0.3",
     "typescript": "~2.8.1"
-  },
-  "dependencies": {
-    "is-stream-ended": "^0.1.4"
   }
 }
