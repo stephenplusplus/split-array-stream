@@ -26,6 +26,7 @@ describe('split-array-stream', () => {
       let numDataEvents = 0;
 
       arrayStream.pipe(new SplitArrayStream())
+          .on('error', done)
           .on('data', () => numDataEvents++)
           .on('end', () => {
             assert.strictEqual(numDataEvents, array.length);
@@ -40,6 +41,7 @@ describe('split-array-stream', () => {
       const sas = new SplitArrayStream();
 
       arrayStream.pipe(sas)
+          .on('error', done)
           .on('data',
               () => {
                 numDataEvents++;
@@ -47,7 +49,7 @@ describe('split-array-stream', () => {
                   sas.end();
                 }
                 if (numDataEvents > expectedNumDataEvents) {
-                  throw new Error('Should not have received this event.');
+                  done(new Error('Should not have received this event.'));
                 }
               })
           .on('end', () => {
@@ -60,6 +62,7 @@ describe('split-array-stream', () => {
       const expectedArray = [].slice.call(array);
 
       arrayStream.pipe(new SplitArrayStream())
+          .on('error', done)
           .on('data', () => {})
           .on('end', () => {
             assert.deepStrictEqual(array, expectedArray);
@@ -89,9 +92,21 @@ describe('split-array-stream', () => {
       let numDataEvents = 0;
 
       new SplitArrayStream(getArrayFn)
+          .on('error', done)
           .on('data', () => numDataEvents++)
           .on('end', () => {
             assert.strictEqual(numDataEvents, array.length);
+            done();
+          });
+    });
+
+    it('should destroy the stream if the promise is rejected', done => {
+      const error = new Error('Error.');
+
+      new SplitArrayStream(() => Promise.reject(error))
+          .on('data', () => {})
+          .on('error', err => {
+            assert.strictEqual(err, error);
             done();
           });
     });
@@ -102,6 +117,7 @@ describe('split-array-stream', () => {
 
       const sas =
           new SplitArrayStream(getArrayFn)
+              .on('error', done)
               .on('data',
                   () => {
                     numDataEvents++;
@@ -109,7 +125,7 @@ describe('split-array-stream', () => {
                       sas.end();
                     }
                     if (numDataEvents > expectedNumDataEvents) {
-                      throw new Error('Should not have received this event.');
+                      done(new Error('Should not have received this event.'));
                     }
                   })
               .on('end', () => {
@@ -133,6 +149,7 @@ describe('split-array-stream', () => {
       let numDataEvents = 0;
 
       new SplitArrayStream(array)
+          .on('error', done)
           .on('data', () => numDataEvents++)
           .on('end', () => {
             assert.strictEqual(numDataEvents, array.length);
@@ -146,6 +163,7 @@ describe('split-array-stream', () => {
 
       const sas =
           new SplitArrayStream(array)
+              .on('error', done)
               .on('data',
                   () => {
                     numDataEvents++;
@@ -153,7 +171,7 @@ describe('split-array-stream', () => {
                       sas.end();
                     }
                     if (numDataEvents > expectedNumDataEvents) {
-                      throw new Error('Should not have received this event.');
+                      done(new Error('Should not have received this event.'));
                     }
                   })
               .on('end', () => {
@@ -165,10 +183,13 @@ describe('split-array-stream', () => {
     it('should not modify original array', done => {
       const expectedArray = [].slice.call(array);
 
-      new SplitArrayStream(array).on('data', () => {}).on('end', () => {
-        assert.deepStrictEqual(array, expectedArray);
-        done();
-      });
+      new SplitArrayStream(array)
+          .on('error', done)
+          .on('data', () => {})
+          .on('end', () => {
+            assert.deepStrictEqual(array, expectedArray);
+            done();
+          });
     });
   });
 });

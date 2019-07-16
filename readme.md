@@ -16,7 +16,7 @@ getReadableStreamThatEmitsArrays()
   })
 ```
 
-### Use case
+### Use Case
 
 Say you're getting many items from an upstream API. Multiple requests might be required to page through all of the results. You want to push the results to the stream as they come in, and only get more results if the user hasn't ended the stream.
 
@@ -36,14 +36,19 @@ const getUsersFromApi = async () => {
     requestOptions.pageToken = nextPageToken
   }
 
-  const response = await request(requestOptions)
-  // response = {
-  //   "users": [
-  //     "callmehiphop",
-  //     "stephenplusplus"
-  //   ],
-  //   "nextPageToken": "--key-used-for-pagination--"
-  // }
+  try {
+    const response = await request(requestOptions)
+    // response = {
+    //   "users": [
+    //     "callmehiphop",
+    //     "stephenplusplus"
+    //   ],
+    //   "nextPageToken": "--key-used-for-pagination--"
+    // }
+  } catch (e) {
+    // Error? Return a rejected promise.
+    return Promise.reject(e);
+  }
 
   const users = response.users
 
@@ -132,7 +137,6 @@ getUsersFromApiAsStream()
     // All items from the array have been received
   })
 ````
-
 
 ### split([getArrayFn])
 
